@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json())
 app.use(cors())
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URL ;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -41,6 +41,22 @@ async function run() {
     app.get('/products', async ( req, res )=>{
         const products = await productsDB.find().toArray()
         res.send(products)
+    })
+
+    // update quantity by buy product
+    app.patch("/products/:id",async (req,res) =>{
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id)}
+        const options = { upsert: true }
+        // console.log(productQuantity)
+        const newQuantity = req.body.productQuantity;
+        const updateProducts = {
+          $set: {
+            productQuantity: newQuantity,
+          }
+        }
+        const result = await productsDB.updateOne(query,updateProducts, options )
+        res.send(result)
     })
 
 

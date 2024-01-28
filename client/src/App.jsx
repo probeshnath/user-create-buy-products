@@ -1,7 +1,28 @@
 import axios from 'axios'
+import { useEffect, useState } from 'react';
 
 const App = () => {
-  const addProducts = (e) =>{
+  const [products, setProducts] = useState(null)
+  // console.log(products)
+
+  // buy product
+  const buyProduct = (product) =>{
+   
+    const productQuantity = parseInt(product.productQuantity) - 1;
+    console.log(productQuantity)
+
+
+    axios.patch(`http://localhost:5000/products/${product._id}`,{productQuantity: productQuantity})
+    .then(res => {
+      console.log(res)
+    })
+    .catch((error) =>{
+      console.log(error)
+    })
+  }
+
+  // add product
+  const addProducts = (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -16,56 +37,44 @@ const App = () => {
     }
     // console.log(product)
     // fetch("http://localhost:5000/products",)
-    axios.post("http://localhost:5000/products",product)
-    .then(res =>{
-      console.log(res.data)
-    })
-    .catch((error) =>{
-      console.log(error)
-    })
+    axios.post("http://localhost:5000/products", product)
+      .then(res => {
+        console.log(res.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
+
+  // fetch all products
+  useEffect(() => {
+    axios.get("http://localhost:5000/products")
+      .then(res => {
+        setProducts(res.data)
+        // console.log(res.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [addProducts,buyProduct])
+
+
   return (
     <main className='bg-red-200 w-screen h-screen'>
       <section className='max-w-7xl mx-auto flex flex-col justify-between h-full w-full px-2'>
         <div>
-          <h2 className='text-center pt-5 lg:pb-10 text-4xl font-semibold text-purple-700'>All products</h2>
+          <h2 className='text-center pt-5 lg:pb-10 text-4xl font-semibold text-purple-700'>All products: {products?.length}</h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-items-center gap-5'>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-              <button>Buy</button>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
-            <div>
-              <h2>Product Name</h2>
-              <p> Price: $40</p>
-              <p>Available: 100</p>
-            </div>
+            {
+              products?.map((product, inx) => (
+                <div key={inx} className='bg-white py-5 px-10 rounded-md'>
+                  <h2 className='text-2xl capitalize'>{product?.productName}</h2>
+                  <p className='text-sm'> Price: ${product?.productPrice}</p>
+                  <p className='text-sm'>Available: {product?.productQuantity}</p>
+                  <button onClick={()=> buyProduct(product)} className='bg-green-600 w-full text-white rounded-md'>Buy</button>
+                </div>
+              ))
+            }
           </div>
         </div>
         {/* product create section */}

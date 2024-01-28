@@ -37,6 +37,12 @@ async function run() {
         res.send(result)
     })
 
+    // fetch all product
+    app.get('/products', async ( req, res )=>{
+        const products = await productsDB.find().toArray()
+        res.send(products)
+    })
+
 
 
 

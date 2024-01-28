@@ -1,6 +1,29 @@
-import React from 'react'
+import axios from 'axios'
 
 const App = () => {
+  const addProducts = (e) =>{
+    e.preventDefault();
+
+    const form = e.target;
+    const productName = form.name.value;
+    const productPrice = form.price.value;
+    const productQuantity = form.quantity.value;
+
+    const product = {
+      productName,
+      productPrice,
+      productQuantity
+    }
+    // console.log(product)
+    // fetch("http://localhost:5000/products",)
+    axios.post("http://localhost:5000/products",product)
+    .then(res =>{
+      console.log(res.data)
+    })
+    .catch((error) =>{
+      console.log(error)
+    })
+  }
   return (
     <main className='bg-red-200 w-screen h-screen'>
       <section className='max-w-7xl mx-auto flex flex-col justify-between h-full w-full px-2'>
@@ -46,17 +69,17 @@ const App = () => {
           </div>
         </div>
         {/* product create section */}
-        <div className='bg-purple-500 py-4 px-6 rounded-md'>
-          <input type="text" className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Name' />
+        <form onSubmit={addProducts} className='bg-purple-500 py-4 px-6 rounded-md'>
+          <input type="text" name='name' className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Name' />
           <div className='flex gap-4'>
-            <input type="number" className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Price' />
-            <input type="number" className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Quantity' />
+            <input type="number" name='price' className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Price' />
+            <input type="number" name='quantity' className='py-2 px-4 mb-2 outline-none w-full rounded-md' placeholder='Enter Product Quantity' />
           </div>
           <div className='flex gap-4'>
-            <input className='py-2 px-4 mb-2 outline-none w-full rounded-md' type="file" placeholder='Enter Your Product Image' />
-            <button className='px-6 bg-green-600 text-lg font-semibold text-white rounded-md '>Create</button>
+            {/* <input className='py-2 px-4 mb-2 outline-none w-full rounded-md' type="file" placeholder='Enter Your Product Image' /> */}
+            <button type='submit' className='px-6 bg-green-600 text-lg font-semibold text-white rounded-md '>Create</button>
           </div>
-        </div>
+        </form>
       </section>
     </main>
   )
